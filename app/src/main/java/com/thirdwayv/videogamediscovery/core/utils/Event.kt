@@ -20,7 +20,6 @@ class Event<out T>(private val content: T) {
 
 class EventObserver<T>(
     private inline val onError: ((String) -> Unit)? = null,
-    private inline val onLoading: (() -> Unit)? = null,
     private inline val onSuccess: (T) -> Unit
 ) : Observer<Event<Resource<T>>> {
     override fun onChanged(t: Event<Resource<T>>?) {
@@ -33,11 +32,6 @@ class EventObserver<T>(
                     onError?.let { error ->
                         error(content.message ?: "")
                     }
-                }
-            }
-            is Resource.Loading -> {
-                onLoading?.let { loading ->
-                    loading()
                 }
             }
         }

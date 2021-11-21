@@ -1,10 +1,10 @@
 package com.thirdwayv.videogamediscovery.core.utils
 
+import android.util.Log
 import com.google.gson.JsonSyntaxException
-import com.thirdwayv.videogamediscovery.core.views.viewmodel.ITriggerViews
 import com.thirdwayv.videogamediscovery.core.others.CoroutineContextProvider
-import com.thirdwayv.videogamediscovery.core.others.Message
 import com.thirdwayv.videogamediscovery.core.others.Resource
+import com.thirdwayv.videogamediscovery.core.views.viewmodel.ITriggerViews
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.ConnectException
@@ -13,7 +13,7 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLException
 
-open class RetrofitCoroutines(private val iTriggerViews: ITriggerViews) {
+open class RetrofitCoroutines(private val iTriggerViews: ITriggerViews? = null) {
 
     /** set it true to handle errors coming from the server*/
     private var errorWillBeHandled: Boolean = false
@@ -26,25 +26,25 @@ open class RetrofitCoroutines(private val iTriggerViews: ITriggerViews) {
     private fun handleNetworkError(e: Throwable): Boolean {
         when {
             e is SocketTimeoutException -> {
-                showError(Message("Can't reach the server"))
+                showError("Can't reach the server")
                 return true
             }
             e is ConnectivityInterceptor.NoConnectivityException || e is UnknownHostException || e is ConnectException || e is SSLException || e is SocketException -> {
 
-                showError(Message("Network not available"))
+                showError("Network not available")
                 return true
             }
             e is JsonSyntaxException -> {
-                showError(Message("Server error"))
+                showError("Server error")
                 return true
             }
             e is IOException -> {
-                showError(Message("Something went wrong"))
+                showError("Something went wrong")
                 return true
             }
             else -> {
                 return if (!errorWillBeHandled) {
-                    showError(Message("Unexpected Error"))
+                    showError("Unexpected Error")
                     true
                 } else
                     false
@@ -52,8 +52,8 @@ open class RetrofitCoroutines(private val iTriggerViews: ITriggerViews) {
         }
     }
 
-    private fun showError(msg: Message) {
-        iTriggerViews.showSnackBarMessage(msg)
+    private fun showError(msg: String) {
+        iTriggerViews?.showSnackBarMessage(msg)
     }
 
 
@@ -64,22 +64,21 @@ open class RetrofitCoroutines(private val iTriggerViews: ITriggerViews) {
     ): Resource<T> {
         return withContext(dispatcher.Main) {
             try {
-                //start show loading
-                if (shouldShowLoading)
-                    iTriggerViews.showLoading()
+                iTriggerViews?.showLoading()
                 withContext(dispatcher.IO) {
                     val result = block.invoke()
                     return@withContext Resource.Success(result)
                 }
             } catch (e: Throwable) {
                 val errorHandled = handleNetworkError(e)
+                Log.e("daddadddafaf", "networkCall: ${e.message}", )
                 if (errorHandled) {
                     Resource.Failure(null)
                 } else {
                     Resource.Failure(e.message)
                 }
             } finally {
-                iTriggerViews.hideLoading()
+                iTriggerViews?.hideLoading()
             }
         }
     }

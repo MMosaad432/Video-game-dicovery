@@ -6,14 +6,14 @@ import com.thirdwayv.videogamediscovery.core.utils.RetrofitCoroutines
 import com.thirdwayv.videogamediscovery.core.views.viewmodel.ITriggerViews
 
 abstract class SuspendableUseCase<I, O>(
-    private val iTriggerViews: ITriggerViews,
     private val dispatcher: CoroutineContextProvider
 ) {
-    abstract suspend fun execute(input: I? = null): O
+    abstract suspend fun execute(input: I? = null, iTriggerViews: ITriggerViews): O
 
-    suspend fun networkCall(
-        block: suspend () -> O
-    ): Resource<O> {
+    protected suspend fun <T> networkCall(
+        iTriggerViews: ITriggerViews? = null,
+        block: suspend () -> T
+    ): Resource<T> {
         return RetrofitCoroutines(
             iTriggerViews
         ).networkCall(

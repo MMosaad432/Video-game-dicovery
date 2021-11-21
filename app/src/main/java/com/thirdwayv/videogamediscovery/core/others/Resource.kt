@@ -6,5 +6,4 @@ sealed class Resource<out T>(val value: T?) {
 
     data class Failure(var message: String? = null) : Resource<Nothing>(null)
 
-    object Loading : Resource<Nothing>(null)
 }

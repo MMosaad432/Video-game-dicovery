@@ -3,7 +3,6 @@ package com.thirdwayv.videogamediscovery.core.views.viewmodel
 import androidx.lifecycle.*
 import com.thirdwayv.videogamediscovery.core.extentions.toOneTimeObserve
 import com.thirdwayv.videogamediscovery.core.others.CoroutineContextProvider
-import com.thirdwayv.videogamediscovery.core.others.Message
 import com.thirdwayv.videogamediscovery.core.others.SingleLiveEvent
 
 /**
@@ -12,7 +11,21 @@ import com.thirdwayv.videogamediscovery.core.others.SingleLiveEvent
  * [Action] represents the action of the view to be handled by [handle]
  * [Result] results returned from Use cases to be reduced in viewMode class using [reduce]
  */
-abstract class BaseViewModel<S : ViewState, A : Action, R : Result>(val dispatcher: CoroutineContextProvider) : ViewModel(), ITriggerViews {
+abstract class BaseViewModel<S : ViewState, A : Action, R : Result>(val dispatcher: CoroutineContextProvider) : ViewModel() {
+
+    val iTriggerViews  = object : ITriggerViews{
+        override fun showLoading() {
+            mShowFullScreenLoader.value = true
+        }
+
+        override fun hideLoading() {
+            mShowFullScreenLoader.value = false
+        }
+
+        override fun showSnackBarMessage(message: String) {
+            mSnackBarMessage.value = message
+        }
+    }
     /**
      * loaderLiveData [MutableLiveData]<[Boolean]> used to toggle progress loader visibility
      */
@@ -21,12 +34,12 @@ abstract class BaseViewModel<S : ViewState, A : Action, R : Result>(val dispatch
     /**
      * loaderLiveData [MutableLiveData]<[Message]> used to show toast in fragment when needed
      */
-    val mSnackBarMessage = MutableLiveData<Message>()
+    val mSnackBarMessage = MutableLiveData<String>()
 
     /**
      * internalViewState instance [ViewState] holds default/initial state of the view
      */
-    abstract val internalViewState: S
+    open val internalViewState: S? = null
 
     /**
      * nextAction [MutableLiveData]<[Action]> used to observe if any action is called
@@ -90,23 +103,5 @@ abstract class BaseViewModel<S : ViewState, A : Action, R : Result>(val dispatch
      */
     infix fun oneTimeDispatch(action: A) {
         oneTimeAction.value = action
-    }
-
-    /**
-     * holds current viewState at any given time
-     */
-    private val currentState: S
-        get() = viewState.value ?: internalViewState
-
-    override fun showLoading() {
-        mShowFullScreenLoader.value = true
-    }
-
-    override fun hideLoading() {
-        mShowFullScreenLoader.value = false
-    }
-
-    override fun showSnackBarMessage(message: Message) {
-        mSnackBarMessage.value = message
     }
 }
