@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".VideoGamesApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,10 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VideoGameDiscovery">
         <activity
-            android:name=".MainActivity"
-            android:exported="false"
+            android:name=".features.main_activity.presentation.views.MainActivity"
+            android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.VideoGameDiscovery.NoActionBar">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
