@@ -27,8 +27,8 @@ class SharedPreferenceManager @Inject constructor(
 
     override fun <T> getList(key: String): MutableList<T> {
         val json = getString(key)
-        val type: Type = object : TypeToken<List<T>>() {}.type
-        return gson.fromJson(json, type)?: mutableListOf<T>()
+        val type: Type = object : TypeToken<List<Int>>() {}.type
+        return gson.fromJson(json, type)?: mutableListOf()
     }
 
     override fun saveBoolean(key: String, value: Boolean) {

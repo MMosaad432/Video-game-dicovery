@@ -33,4 +33,11 @@ public class LiveDataToOnTimeObserve<T> extends MediatorLiveData<T> {
             }
         });
     }
+
+    @MainThread
+    @Override
+    public void setValue(T value) {
+        mPending.set(true);
+        super.setValue(value);
+    }
 }

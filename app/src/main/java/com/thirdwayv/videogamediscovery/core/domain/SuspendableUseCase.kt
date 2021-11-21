@@ -8,7 +8,7 @@ import com.thirdwayv.videogamediscovery.core.views.viewmodel.ITriggerViews
 abstract class SuspendableUseCase<I, O>(
     private val dispatcher: CoroutineContextProvider
 ) {
-    abstract suspend fun execute(input: I? = null, iTriggerViews: ITriggerViews): O
+    abstract suspend fun execute(input: I? = null, iTriggerViews: ITriggerViews? = null): O
 
     protected suspend fun <T> networkCall(
         iTriggerViews: ITriggerViews? = null,

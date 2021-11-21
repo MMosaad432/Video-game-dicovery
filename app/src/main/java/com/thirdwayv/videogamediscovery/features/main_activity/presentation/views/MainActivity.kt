@@ -45,10 +45,16 @@ class MainActivity : AppCompatActivity(), LoaderTrigger, IFABImage {
                 val graph = inflater.inflate(R.navigation.nav_graph)
 
 
-                if (it.isFavoriteSelected) {
-                    graph.startDestination = R.id.SecondFragment
+                appBarConfiguration = if (it.isFavoriteSelected) {
+                    graph.startDestination = R.id.GamesFragment
+                    AppBarConfiguration
+                        .Builder(R.id.GamesFragment)
+                        .build()
                 } else {
                     graph.startDestination = R.id.FavoriteGenresFragmentFragment
+                    AppBarConfiguration
+                        .Builder(R.id.GamesFragment, R.id.FavoriteGenresFragmentFragment)
+                        .build()
                 }
 
                 navHostFragment.navController.graph = graph
@@ -56,7 +62,7 @@ class MainActivity : AppCompatActivity(), LoaderTrigger, IFABImage {
                 setSupportActionBar(binding.toolbar)
 
                 val navController = findNavController(R.id.nav_host_fragment_content_main)
-                appBarConfiguration = AppBarConfiguration(navController.graph)
+
                 setupActionBarWithNavController(navController, appBarConfiguration)
             }
         }
